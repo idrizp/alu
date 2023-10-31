@@ -2,13 +2,17 @@
 
 module alu_tb;
 
-  // Instantiate the full adder and eight-bit adder modules.
+  // Instantiate the eight-bit adder modules(the full adder has already been tested)
   reg [7:0] a, b;
   reg cin;
   wire [7:0] sum;
+  wire [7:0] negated;
+  wire [7:0] difference;
   wire cout;
 
-  adder_8 A8 (.sum(sum), .cout(cout), .a(a), .b(b));
+  add8 A8 (.sum(sum), .cout(cout), .a(a), .b(b));
+  neg8 N8(.out(negated), .a(a));
+  sub8 S8(.out(difference), .a(a), .b(b));
 
   initial begin
     #10 a = 8'b01011010;
@@ -17,6 +21,10 @@ module alu_tb;
     #10;
     // Display the results
     $display("Output: sum=%b, cout=%b", sum, cout);
+    #10;
+    $display("Negated: neg(a)=%b", negated);
+
+    $display("Subtracted(a-b)=%b", difference);
 
     // Finish the simulation
     $finish;

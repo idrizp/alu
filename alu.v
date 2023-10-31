@@ -1,5 +1,5 @@
 // A full-adder.
-module full_adder (
+module add1 (
     sum,
     cout,
     a,
@@ -23,7 +23,7 @@ module full_adder (
 endmodule
 
 // An eight-bit adder.
-module adder_8 (
+module add8 (
     cout,
     sum,
     a,
@@ -35,13 +35,54 @@ module adder_8 (
 
     wire [6:0] cin;
 
-    full_adder fa0(.sum(sum[0]), .cout(cin[0]), .a(a[0]), .b(b[0]), .cin(1'b0));
+    add1 fa0(.sum(sum[0]), .cout(cin[0]), .a(a[0]), .b(b[0]), .cin(1'b0));
     generate
     genvar i;
     for (i = 1; i < 7; i = i+1) begin
-        full_adder fa(.sum(sum[i]), .cout(cin[i]), .a(a[i]), .b(b[i]), .cin(cin[i - 1]));
+        add1 fa(.sum(sum[i]), .cout(cin[i]), .a(a[i]), .b(b[i]), .cin(cin[i - 1]));
     end
     endgenerate
-    full_adder fa7(.sum(sum[7]), .cout(cout), .a(a[7]), .b(b[7]), .cin(cin[6]));
+    add1 fa7(.sum(sum[7]), .cout(cout), .a(a[7]), .b(b[7]), .cin(cin[6]));
 
+endmodule
+
+// Using two's complement, we can negate an 8 bit number
+module neg8(
+    out,
+    a
+);
+    input [7:0] a;
+    output [7:0] out;
+
+    wire [7:0] b;
+    generate
+        genvar i;
+        for (i = 0; i < 8; i = i+1) begin
+            not(b[i], a[i]);
+        end
+    endgenerate
+
+    wire dummy_wire;
+    add8 A8(
+        .cout(dummy_wire),
+        .sum(out),
+        .a(b),
+        .b(8'b01)
+    );
+endmodule
+
+// Subtraction with 8 bit numbers
+module sub8 (
+    out,
+    a,
+    b
+);
+    input [7:0] a, b;
+    output [7:0] out;
+    
+    wire[7:0] b_negated;
+    neg8 N8(.out(b_negated),.a(b));
+
+    wire dummy_wire;
+    add8 A8(.cout(dummy_wire), .sum(out), .a(a), .b(b_negated));
 endmodule
