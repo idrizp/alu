@@ -5,7 +5,7 @@ A simple arithmetic logic unit, I'm writing this so I get a feel for Verilog and
 
 Current features:
 - [x] 8-bit adder
-- [ ] Summation instruction
-- [ ] Subtraction instruction
+- [x] Summation instruction
+- [x] Subtraction instruction
 - [ ] Multiplication instruction
 - [ ] Division instruction
